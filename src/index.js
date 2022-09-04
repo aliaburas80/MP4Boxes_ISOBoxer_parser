@@ -91,7 +91,7 @@ const loadMP4File = (url) => {
     const blob = new Blob([res.data]);
     blob.arrayBuffer().then((buffer) => {
       objectTree = {};
-      extractBoxes(ISOBoxer.parseBuffer(buffer).boxes, objectTree);
+      extractBoxes(ISOBoxer.parseBuffer(buffer).boxes);
       console.log(objectTree);
     });
   });
@@ -101,15 +101,15 @@ const loadMP4File = (url) => {
 const extractBoxes = (boxes) => {
   boxes.forEach((element) => {
     parent = this;
-    checkBoxesChildren(element, element.boxes);
+    checkBoxesChildren(element);
   });
 };
 
-const checkBoxesChildren = (box, obj) => {
+const checkBoxesChildren = (box) => {
   if (box.boxes) {
     logData(TYPES.BOX_SIZE, box);
     createBoxesObjTree(box);
-    extractBoxes(box.boxes, obj);
+    extractBoxes(box.boxes);
   } else {
     const data = ISOBoxer.Utils.dataViewToString(box._raw, "utf-8");
     if (box.type === "mdat") {
