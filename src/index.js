@@ -2,6 +2,7 @@ let objectTree = {};
 const TYPES = {
   BOX_SIZE: "boxSize",
   DATA: "data",
+  OBJECT_TREE: "objectTree",
 };
 // to write console.
 const logData = (type, data) => {
@@ -10,18 +11,30 @@ const logData = (type, data) => {
       console.log(
         `%cFound Box of type %c${data.type} and size %c${data.size}`,
         "color:#f54949; font-size:20;",
-        "color:#99ffff;  font-size:18px;fontWight:bold text-transform:uppercase;",
-        "color: #ffff99;  font-size:18px;"
+        "color:#99ffff; font-size:18px;fontWight:bold text-transform:uppercase;",
+        "color:#ffff99; font-size:18px;"
       );
       break;
     case TYPES.DATA:
       console.log(
         `%cContent of mdat box is %c${data.split("mdat")[1]}`,
         "color:#99ffff; text-transform:uppercase; font-size:18px;fontWight:bold",
-        "color: #ffff99; font-size:18px;"
+        "color:#ffff99; font-size:18px;"
       );
       break;
+    case TYPES.OBJECT_TREE:
+      console.log(
+        "%cObject Tree = ",
+        "color:#99ffff; text-transform:uppercase; font-size:18px;fontWight:bold"
+      );
+      console.log(data);
+      break;
     default:
+      console.log(`------------------------------------------`);
+      console.log(`------------------------------------------`);
+      console.log(`-----------------{ ${data} }-----------------`);
+      console.log(`------------------------------------------`);
+      console.log(`------------------------------------------`);
       break;
   }
 };
@@ -78,11 +91,7 @@ const drawImages = (data) => {
 
 // load MP4 file using axios, then parse buffer array using ISOBoxer to get all boxes from the media file
 const loadMP4File = (url) => {
-  console.log(`------------------------------------------`);
-  console.log(`------------------------------------------`);
-  console.log(`-----------------{${url}}-----------------`);
-  console.log(`------------------------------------------`);
-  console.log(`------------------------------------------`);
+  logData("", url);
   this.axios({
     url,
     method: "GET",
@@ -92,12 +101,12 @@ const loadMP4File = (url) => {
     blob.arrayBuffer().then((buffer) => {
       objectTree = {};
       extractBoxes(ISOBoxer.parseBuffer(buffer).boxes);
-      console.log(objectTree);
+      logData(TYPES.OBJECT_TREE, objectTree);
     });
   });
 };
 
-// extract each boxes and its children 
+// extract each boxes and its children
 const extractBoxes = (boxes) => {
   boxes.forEach((element) => {
     parent = this;
@@ -122,7 +131,7 @@ const checkBoxesChildren = (box) => {
     }
   }
 };
-// load media files 
+// load media files
 loadMP4File("https://demo.castlabs.com/tmp/text0.mp4");
 //for large boxes it took a long time to parse, may affect performance
 // loadMP4File(
